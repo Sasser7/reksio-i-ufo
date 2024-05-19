@@ -1,23 +1,20 @@
     processor 6502
 
-    seg code
+    include "vcs.h"
+    include "macro.h"
+
+    seg Code
     org $F000   ; Define the code origin at $F000
 
-start:
-    sei      ; Disable interrupts
-    cld      ; Disable decimal mode
-    ldx #$FF  ; Set the stack pointer
-    txs      ; Set it
+Start:
+    CLEAN_START
 
+GameLoop:
+    lda #$B4    ; PAL blue
+    sta COLUBK
 
-    lda #0
-    ldx #$FF
-
-memLoop:
-    sta $0000,x
-    dex
-    bne memLoop     ; Loop until z-flag is set
+    jmp GameLoop
 
     org $FFFC   ; Fill the ROM size to 4KB
-    .word start
-    .word start
+    .word Start
+    .word Start
