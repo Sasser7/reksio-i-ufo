@@ -1,60 +1,82 @@
-; This is a PAL version of the game
-; Made with ❤️ by Sasser7
+; This is an NTSC version of the game
+; Made with ❤️ by Karol Stępień (Sasser7)
 
     processor 6502
 
     include "vcs.h"
     include "macro.h"
 
-NUM_SCANLINES = 242 ; 242 for PAL, 192 for NTSC
-
     seg Code
     org $F000   ; Define the code origin at $F000
 
 Start:
     CLEAN_START
-
-RenderLoop:
-
+NextFrame:
+    ;;;;;;;;;;;;;;;;;;;;;;
+    ;;  Vertical sync   ;;
+    ;;;;;;;;;;;;;;;;;;;;;;
     lda #2
-
     sta VBLANK
     sta VSYNC
 
-    sta WSYNC
-    sta WSYNC
-    sta WSYNC
+    REPEAT 3
+        sta WSYNC
+    REPEND
 
     lda #0
-
     sta VSYNC
-
-    ldx #37
-VBlankLoop:
-    sta WSYNC
-    dex
-    bne VBlankLoop
-
+    ;;;;;;;;;;;;;;;;;;;;;;
+    ;;  Vertical Blank  ;;
+    ;;;;;;;;;;;;;;;;;;;;;;
+    REPEAT 37
+        sta WSYNC
+    REPEND
     lda #0
     sta VBLANK
+    ;;;;;;;;;;;;;;;;;;;;;;
+    ;; Visible Picture  ;;
+    ;;;;;;;;;;;;;;;;;;;;;;
+    ldx #$92
+    REPEAT 7
+        stx COLUBK
+        sta WSYNC
+    REPEND
 
-    ldx #NUM_SCANLINES
-VisibleLoop:
+    ldx #$1E
+    REPEAT 7
+        stx COLUBK
+        sta WSYNC
+    REPEND
+
+    ldx #$92
+    REPEAT 164
+        stx COLUBK
+        sta WSYNC
+    REPEND
+
+    ldx #$1E
+    REPEAT 7
+        stx COLUBK
+        sta WSYNC
+    REPEND
+
+    ldx #$92
+    REPEAT 7
+        stx COLUBK
+        sta WSYNC
+    REPEND
+
+    ldx #$00
     stx COLUBK
-    sta WSYNC
-    dex
-    bne VisibleLoop
-
+    ;;;;;;;;;;;;;;;;;;;;;;
+    ;;  LOOP OVERSCAN   ;;
+    ;;;;;;;;;;;;;;;;;;;;;;
     lda #2
-    sta VBLANK
-
-    ldx #30
-LoopOverscan:
-    sta WSYNC
-    dex
-    bne LoopOverscan
-
-    jmp RenderLoop
+    REPEAT 30
+        sta WSYNC
+    REPEND
+    ;;;;;;;;;;;;;;;;;;;;;;
+    jmp NextFrame
 
     org $FFFC   ; Fill the ROM size to 4KB
     .word Start
