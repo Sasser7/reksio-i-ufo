@@ -11,10 +11,19 @@
 
 Start:
     CLEAN_START
+
+    ldx #$92
+    stx COLUBK
+
+    ldx #$1E
+    stx COLUPF
+
 NextFrame:
+
     ;;;;;;;;;;;;;;;;;;;;;;
     ;;  Vertical sync   ;;
     ;;;;;;;;;;;;;;;;;;;;;;
+
     lda #2
     sta VBLANK
     sta VSYNC
@@ -25,56 +34,83 @@ NextFrame:
 
     lda #0
     sta VSYNC
+
     ;;;;;;;;;;;;;;;;;;;;;;
     ;;  Vertical Blank  ;;
     ;;;;;;;;;;;;;;;;;;;;;;
+
     REPEAT 37
         sta WSYNC
     REPEND
     lda #0
     sta VBLANK
+
+    ;;;;;;;;;;;;;;;;;;;;;;
+    ;;    set CTRLPF    ;;
+    ;;;;;;;;;;;;;;;;;;;;;;
+
+    ldx #%00000001
+    stx CTRLPF
+
     ;;;;;;;;;;;;;;;;;;;;;;
     ;; Visible Picture  ;;
     ;;;;;;;;;;;;;;;;;;;;;;
-    ldx #$92
+
+    ldx #0
+    stx PF0
+    stx PF1
+    stx PF2
     REPEAT 7
-        stx COLUBK
         sta WSYNC
     REPEND
 
-    ldx #$1E
+    ldx #%11100000
+    stx PF0
+    ldx #%11111111
+    stx PF1
+    stx PF2
     REPEAT 7
-        stx COLUBK
         sta WSYNC
     REPEND
 
-    ldx #$92
+    ldx #%01100000
+    stx PF0
+    ldx #0
+    stx PF1
+    ldx #%10000000
+    stx PF2
     REPEAT 164
-        stx COLUBK
         sta WSYNC
     REPEND
 
-    ldx #$1E
+    ldx #%11100000
+    stx PF0
+    ldx #%11111111
+    stx PF1
+    stx PF2
     REPEAT 7
-        stx COLUBK
         sta WSYNC
     REPEND
 
-    ldx #$92
+    ldx #0
+    stx PF0
+    stx PF1
+    stx PF2
     REPEAT 7
-        stx COLUBK
         sta WSYNC
     REPEND
 
-    ldx #$00
-    stx COLUBK
     ;;;;;;;;;;;;;;;;;;;;;;
     ;;  LOOP OVERSCAN   ;;
     ;;;;;;;;;;;;;;;;;;;;;;
+
     lda #2
+    sta VBLANK
     REPEAT 30
         sta WSYNC
     REPEND
+    lda #0
+    sta VBLANK
     ;;;;;;;;;;;;;;;;;;;;;;
     jmp NextFrame
 
