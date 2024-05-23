@@ -18,7 +18,7 @@ Start:
     ldx #$1E
     stx COLUPF
 
-    ldx #$48
+    ldx #$0E
     stx COLUP0
 
     ldx #$C6
@@ -62,47 +62,26 @@ NextFrame:
     ;; Visible Picture  ;;
     ;;;;;;;;;;;;;;;;;;;;;;
 
-    ldx #0
-    stx PF0
-    stx PF1
-    stx PF2
-    REPEAT 7
-        sta WSYNC
-    REPEND
+    ;;;;;;;;;;;;;;;;;;;;;;
+    ;; Sprite Renderer  ;;
+    ;;;;;;;;;;;;;;;;;;;;;;
 
-    ldx #%11100000
-    stx PF0
-    ldx #%11111111
-    stx PF1
-    stx PF2
-    REPEAT 7
-        sta WSYNC
-    REPEND
+    ldy #0
+RenderPlayer:
+    ldx Player,Y
+    stx GRP0
 
-    ldx #%01100000
-    stx PF0
-    ldx #0
-    stx PF1
-    ldx #%10000000
-    stx PF2
-    REPEAT 164
-        sta WSYNC
-    REPEND
+    lda #0
+    sta WSYNC
 
-    ldx #%11100000
-    stx PF0
-    ldx #%11111111
-    stx PF1
-    stx PF2
-    REPEAT 7
-        sta WSYNC
-    REPEND
+    iny
+    cpy #9
+    bne RenderPlayer
 
-    ldx #0
-    stx PF0
-    stx PF1
-    stx PF2
-    REPEAT 7
+    ldy #0
+    sty GRP0
+
+    REPEAT 183
         sta WSYNC
     REPEND
 
@@ -117,7 +96,9 @@ NextFrame:
     REPEND
     lda #0
     sta VBLANK
+    
     ;;;;;;;;;;;;;;;;;;;;;;
+
     jmp NextFrame
 
     org $FFF3
@@ -125,5 +106,4 @@ Player:
     .byte #%01000000, #%01100000, #%01011000, #%01111010, #%01110010, #%00111110, #%01111000, #%11110000, #%10110000    ; Sprite of Reksio
 
     org $FFFC   ; Fill the ROM size to 4KB
-    .word Start
-    .word Start
+    .long Start
