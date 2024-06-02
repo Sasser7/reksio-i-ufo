@@ -9,6 +9,8 @@
     seg Code
     org $F000   ; Define the code origin at $F000
 
+PlayerXPos byte
+
 Start:
     CLEAN_START
 
@@ -26,9 +28,7 @@ Start:
 
 NextFrame:
 
-    ;;;;;;;;;;;;;;;;;;;;;;
-    ;;  Vertical sync   ;;
-    ;;;;;;;;;;;;;;;;;;;;;;
+    ; VSYNC
 
     lda #2
     sta VBLANK
@@ -41,9 +41,9 @@ NextFrame:
     lda #0
     sta VSYNC
 
-    ;;;;;;;;;;;;;;;;;;;;;;
-    ;;  Vertical Blank  ;;
-    ;;;;;;;;;;;;;;;;;;;;;;
+    ; VBLANK
+
+    ; Position the player
 
     REPEAT 37
         sta WSYNC
@@ -51,20 +51,14 @@ NextFrame:
     lda #0
     sta VBLANK
 
-    ;;;;;;;;;;;;;;;;;;;;;;
-    ;;    set CTRLPF    ;;
-    ;;;;;;;;;;;;;;;;;;;;;;
+    ; CTRLPF
 
     ldx #%00000001
     stx CTRLPF
 
-    ;;;;;;;;;;;;;;;;;;;;;;
-    ;; Visible Picture  ;;
-    ;;;;;;;;;;;;;;;;;;;;;;
+    ; Visible Picture
 
-    ;;;;;;;;;;;;;;;;;;;;;;
-    ;; Sprite Renderer  ;;
-    ;;;;;;;;;;;;;;;;;;;;;;
+    ; Sprite Renderer
 
     ldy #0
 RenderPlayer:
@@ -85,9 +79,7 @@ RenderPlayer:
         sta WSYNC
     REPEND
 
-    ;;;;;;;;;;;;;;;;;;;;;;
-    ;;  LOOP OVERSCAN   ;;
-    ;;;;;;;;;;;;;;;;;;;;;;
+    ; Loop Overscan
 
     lda #2
     sta VBLANK
